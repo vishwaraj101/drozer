@@ -7,6 +7,7 @@ import subprocess
 
 from src.drozer import meta
 from sys import platform
+from security import safe_command
 
 def find_files(src):
     matches = []
@@ -96,13 +97,13 @@ def make_apks():
 				dx_cmd = [lib+dx, '--dex', '--output='+m.group(1)+'.apk',m.group(1)+'*.class']
 
 				if platform == "linux2" or platform == "linux":
-					subprocess.call(' '.join(javac_cmd),shell=True,cwd=root)
+					safe_command.run(subprocess.call, ' '.join(javac_cmd),shell=True,cwd=root)
 
-					subprocess.call(' '.join(dx_cmd),shell=True,cwd=root)
+					safe_command.run(subprocess.call, ' '.join(dx_cmd),shell=True,cwd=root)
 				elif platform == "win32":
-					subprocess.call(javac_cmd,shell=True,cwd=root)
+					safe_command.run(subprocess.call, javac_cmd,shell=True,cwd=root)
 
-					subprocess.call(dx_cmd,shell=True,cwd=root)
+					safe_command.run(subprocess.call, dx_cmd,shell=True,cwd=root)
 				
 def get_package_data():
 	data = {"":[]}
@@ -134,6 +135,6 @@ setuptools.setup(
                     "pydiesel": "src/pydiesel" },
   package_data = get_package_data(),
   scripts = get_executable_scripts(),
-  install_requires = ["protobuf>=2.6.1","pyopenssl>=16.2", "pyyaml>=3.11"],
+  install_requires = ["protobuf>=2.6.1","pyopenssl>=16.2", "pyyaml>=3.11", "security==1.2.1"],
   data_files = get_install_data(),
   classifiers = [])
